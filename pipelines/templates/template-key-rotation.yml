@@ -1,0 +1,21 @@
+# template for Service Connection Application secret rotation
+parameters:
+- name: serviceconnection_name
+  type: string
+- name: keyrotation_script
+  type: string
+
+steps:
+- task: AzureCLI@2
+  name: rotate_application_secret
+  displayName: Service Connection Application secret rotation
+  inputs:
+    azureSubscription: ${{ parameters.serviceconnection_name }}
+    scriptType: 'pscore'
+    scriptLocation: 'scriptPath'
+    scriptPath: ${{ parameters.keyrotation_script }}
+    addSpnToEnvironment: true
+    failOnStandardError: true
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    RELEASE_RELEASEWEBURL: '$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)'

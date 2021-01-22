@@ -1,0 +1,30 @@
+# This pipeline performs key rotation for the Azure AD Application of a specific Service Connection.
+
+pr: none
+trigger: none
+schedules:
+- cron: "0 5 * * *"
+  displayName: Daily Service Connection key rotation
+  branches:
+    include:
+    - master
+  always: true
+
+variables:
+  keyRotationScript: '$(System.DefaultWorkingDirectory)/scripts/Set-AzureDevOpsKeyRotation.ps1'
+  serviceConnectionNameLUTS: 'LUTS'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: service_connection_key_rotation
+    displayName: Azure DevOps Service Connection key rotation
+    jobs:
+      - job: LUTS
+        displayName: Service Connection DevOps LUTS
+        steps:
+        - template: templates/template-key-rotation.yml
+          parameters:
+            serviceconnection_name: ${{ variables.serviceConnectionNameLUTS }}
+            keyrotation_script: ${{ variables.keyRotationScript }}

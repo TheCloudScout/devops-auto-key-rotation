@@ -1,0 +1,19 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: AzureCLI@2
+  displayName: Retrieve Service Connection credentials
+  inputs:
+    azureSubscription: 'LUTS'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      Write-Host "tenantId: $([System.Convert]::ToBase64String([System.Text.ASCIIEncoding]::ASCII.GetBytes([System.Environment]::GetEnvironmentVariable("tenantId"))))"
+      Write-Host "servicePrincipalId: $([System.Convert]::ToBase64String([System.Text.ASCIIEncoding]::ASCII.GetBytes([System.Environment]::GetEnvironmentVariable("servicePrincipalId"))))"
+      Write-Host "servicePrincipalKey: $([System.Convert]::ToBase64String([System.Text.ASCIIEncoding]::ASCII.GetBytes([System.Environment]::GetEnvironmentVariable("servicePrincipalKey"))))"
+      Write-Host ""
+      Write-Host "You can decode these values in PowerShell with: [System.Text.ASCIIEncoding]::ASCII.GetString([System.Convert]::FromBase64String(""<Base64 encoded string>""))"
+    addSpnToEnvironment: true
